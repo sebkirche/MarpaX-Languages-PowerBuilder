@@ -9,6 +9,7 @@ use Marpa::R2;
 use Encode qw(decode);        #used in string -> HA decodes
 use Data::Dumper;
 use File::Basename qw(dirname);
+use constant DEBUG => 1;
 
 $|++;
 
@@ -48,7 +49,9 @@ sub syntax{
 }
 
 sub list{ shift, \@_ }
+
 sub keyval{ +{@_[1,2]} }
+
 sub listkeyval{
     shift;
     my %attr;
@@ -64,33 +67,59 @@ sub release{ $_[2] }
 
 sub containers{ 
     my (undef, @containers ) =@_;
+	my %controls;
     my @columns = map { values %$_ } grep { exists $_->{column} } @containers;
-    @containers = grep { !exists $_->{column} } @containers;
+    my @texts = map { values %$_ } grep { exists $_->{text} } @containers;
+    my @computes = map { values %$_ } grep { exists $_->{compute} } @containers;
+    @containers = grep { !exists $_->{column}  && !exists $_->{text} && !exists $_->{compute}} @containers;
+	
+	#we regroup the columns and texts in the "controls" hash
     if(@columns){
         my $id = 1;
-        $_->{id} = $id++ for @columns;
+        $_->{'#'} = $id++ for @columns;
         my %cols;
         $cols{$_->{name}}=$_ for @columns;
-        push @containers, { columns => \%cols };
+        $controls{columns} = \%cols;
     }
+    if(@texts){
+        my $id = 1;
+        $_->{'#'} = $id++ for @texts;
+        my %txts;
+        $txts{$_->{name}}=$_ for @texts;
+        $controls{texts} = \%txts;
+    }
+    if(@computes){
+        my %cmp;
+        $cmp{$_->{name}}=$_ for @computes;
+        $controls{computes} = \%cmp;
+    }
+	push @containers, { controls => \%controls };
+
     return \@containers;
 }
 
-sub attributs{
+sub attributes{
     shift;
     my %attr;
     my @cols = map{ $_->{columns} } grep { exists $_->{columns} } @_;
+	
+	#inject a column id into the column list
+	my $id = 1;
+	for (@cols){
+		(values $_)[0]{'#'} = $id++;	#FIXME: ???! is it the perlish way to do ?
+	}
+	
     $attr{columns} = listkeyval( undef, @cols ) if @cols;
     %attr = (%attr, %$_) for grep { !exists $_->{columns} } @_;
     return \%attr;
 }
 
-sub colattribut{    
+sub colattribute{    
     my ($ppa, $name, undef, $value) = @_;
     return { columns => { $value->{name} => $value } };
 }
 
-sub attribut{
+sub attribute{
     my ($ppa, $name, undef, $value) = @_;
     return {$name => $value};
 }
