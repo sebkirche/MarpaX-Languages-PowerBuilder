@@ -2,26 +2,25 @@
 :start              ::= Syntax
 lexeme default = latm => 1
  
-Header              ::= Encoding ('$PBExportHeader$':i) rest_of_line action => header
+Header              ::= Encoding ('PBExportHeader$':i) rest_of_line action => header
 Comment             ::= ('$PBExportComments$') rest_of_line action => comment
 rest_of_line          ~ comment_char*
 comment_char          ~ [^\x{A}\x{B}\x{C}\x{D}\x{2028}\x{2029}]
-Encoding              ~ 'HA':i
-Encoding              ~
+Encoding              ~ 'HA$':i
+                      | '$'
+
 pbheader            ::= Header Comment
                       | Header
                       | Comment
 pbheader            ::=
 
-Syntax              ::= pbheader Release Containers  action => syntax
+Syntax              ::= pbheader Release Containers BinarySection action => syntax
 Release             ::= 'release':i number ';'       action => release
 Containers          ::= Container+                   action => containers
 Container           ::= Data                         action => ::first
-                      | CtrlColumn                   action => ::first
-                      | CtrlText                     action => ::first
                       | identifier ListAttributes    action => keyval
-ListAttributes       ::= ('(') Attributes (')')      action => ::first
-ListArguments       ::= Argument* separator => comma action => listkeyval
+ListAttributes      ::= ('(') Attributes (')')       action => ::first
+ListArguments       ::= Argument*                    separator => comma action => listkeyval
 ListNestedArguments ::= NestedArgument* separator => comma          action => list
 NestedArgument      ::= ('(') string (')')                          action => ::first
 Argument            ::= ('(') ArgumentName (',') ArgumentType (')') action => keyval
@@ -31,17 +30,14 @@ Attributes          ::= Attribute*                action => attributes
 Attribute           ::= ColumnAttribute           action => ::first
                       | identifier '=' Value      action => attribute
 ColumnAttribute     ::= 'column' '=' Value        action => colattribute
-CtrlColumn          ::= 'column' ListAttributes   action => list
-CtrlText            ::= 'text' ListAttributes     action => list
 Data                ::= 'data' '(' DataValues ')' action => data
-#DataValues          ::= DataValue* separator => comma proper => 1 action => ::first
+#DataValues          ::= DataValue*               separator => comma proper => 1 action => ::first
 DataValues          ::= DataValueSep*       action => list
 DataValueSep        ::= DataValue (comma)   action => ::first
                       | DataValue           action => ::first
 DataValue           ::= 'null' action => ::first
                       | number action => ::first
                       | string action => ::first
-
 
 Value               ::= number                          action => ::first
                       | Datatype                        action => ::first
@@ -56,6 +52,21 @@ Value               ::= number                          action => ::first
 ListStrings         ::= string* separator => comma
 
 Datatype            ::= identifier '(' number ')' action => datatype
+
+BinarySection       ::= ('Start of PowerBuilder Binary Data Section : Do NOT Edit')
+                        ( [\d][\d] ) <binary name> 
+                        <binary lines> 
+                        ( [\d][\d]  <binary name>)
+                        ('End of PowerBuilder Binary Data Section : No Source Expected After This Point')
+                        action => keyval
+BinarySection       ::= action => ::undef;
+<binary name>         ~ [\w.]+
+<binary lines>      ::= <binary line>*
+<binary line>         ~ <binary chars> <vertical space>
+<binary chars>        ~ <binary char>+
+<binary char>         ~ [a-fA-F0-9] [a-fA-F0-9]
+<vertical space>      ~ [\x{A}\x{B}\x{C}\x{D}\x{2028}\x{2029}]+
+
 comma                 ~ [,]
 
 #This <identifier>, <number> and <string> comes from https://gist.github.com/jeffreykegler/4579728#file-marpax-json-pm-L65

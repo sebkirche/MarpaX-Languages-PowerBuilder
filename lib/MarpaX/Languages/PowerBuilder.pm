@@ -5,6 +5,7 @@ use strict;
 use warnings FATAL => 'all';
 
 =encoding utf8
+
 =head1 NAME
 
 MarpaX::Languages::PowerBuilder - PowerBuilder sources parsers based on Marpa::R2

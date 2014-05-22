@@ -1,7 +1,10 @@
 MarpaX-Languages-PowerBuilder
 =============================
 
-PowerBuilder sources parsers based on Jeffrey Keglers's Marpa::R2
+Parsers for different PowerBuilder sources files based on Jeffrey Keglers's Marpa::R2.
+Work was done in collaboration with Nicolas Georges and with help from Jeffrey.
+MarpaX-Languages-PowerBuilder
+=============================
 
 INSTALLATION
 

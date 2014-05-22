@@ -1,5 +1,6 @@
 package MarpaX::Languages::PowerBuilder::SRD;
-#a SRQ parser and compiler to SQL
+
+#a datawindow parser by Nicolas Georges
 
 use feature 'say';
 use strict;
@@ -42,8 +43,9 @@ sub parse{
 }
 
 sub syntax{
-    my ($ppa, $header, $release, $containers, @remains) = @_;
+    my ($ppa, $header, $release, $containers, $binsection) = @_;
     my %attr = ( release => $release );
+    $attr{binary}=$binsection if defined $binsection;
     %attr = (%attr, %$_) for @$containers, $header->[1];
     return \%attr;
 }
@@ -65,36 +67,26 @@ sub comment{ { comment => $_[1] } }
 
 sub release{ $_[2] }
 
+my $control_types = do{ 
+        my $types = join '|', qw(column text bitmap button 
+                    compute ellipse graph groupbox 
+                    inkpic line ole rectangle 
+                    report roundrectangle tableblob);
+        qr/^($types)$/io;
+    };
+                    
 sub containers{ 
     my (undef, @containers ) =@_;
-	my %controls;
-    my @columns = map { values %$_ } grep { exists $_->{column} } @containers;
-    my @texts = map { values %$_ } grep { exists $_->{text} } @containers;
-    my @computes = map { values %$_ } grep { exists $_->{compute} } @containers;
-    @containers = grep { !exists $_->{column}  && !exists $_->{text} && !exists $_->{compute}} @containers;
-	
-	#we regroup the columns and texts in the "controls" hash
-    if(@columns){
+    my @controls = map { (%$_)[1]->{type} = (%$_)[0]; values %$_ } grep { (%$_)[0] =~ $control_types } @containers;
+    #~ die Dumper( \@containers );
+    @containers = grep { (%$_)[0] !~ $control_types } @containers;
+    if(@controls){
         my $id = 1;
-        $_->{'#'} = $id++ for @columns;
-        my %cols;
-        $cols{$_->{name}}=$_ for @columns;
-        $controls{columns} = \%cols;
+        $_->{'#'} = $id++ for grep {$_->{type} eq 'column'} @controls;
+        my %ctls;
+        $ctls{$_->{name}}=$_ for @controls;
+        push @containers, { controls => \%ctls };
     }
-    if(@texts){
-        my $id = 1;
-        $_->{'#'} = $id++ for @texts;
-        my %txts;
-        $txts{$_->{name}}=$_ for @texts;
-        $controls{texts} = \%txts;
-    }
-    if(@computes){
-        my %cmp;
-        $cmp{$_->{name}}=$_ for @computes;
-        $controls{computes} = \%cmp;
-    }
-	push @containers, { controls => \%controls };
-
     return \@containers;
 }
 
@@ -106,7 +98,7 @@ sub attributes{
 	#inject a column id into the column list
 	my $id = 1;
 	for (@cols){
-		(values $_)[0]{'#'} = $id++;	#FIXME: ???! is it the perlish way to do ?
+		(values %$_)[0]{'#'} = $id++;	#FIXME: ???! is it the perlish way to do ?
 	}
 	
     $attr{columns} = listkeyval( undef, @cols ) if @cols;
@@ -139,7 +131,7 @@ sub hadecode{
 
 sub string{ 
     my ($ppa, $str) = @_;    
-    if($ppa->{encoding}//'' eq 'HA' ){
+    if($ppa->{encoding}//'' eq 'HA$' ){
         #cr$$HEX1$$e900$$ENDHEX$$ance 
         $str =~ s/\$\$HEX\d+\$\$([a-fA-F0-9]+)\$\$ENDHEX\$\$/hadecode($1)/ge;
     }

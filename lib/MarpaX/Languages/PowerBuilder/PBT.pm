@@ -1,5 +1,6 @@
 package MarpaX::Languages::PowerBuilder::PBT;
-#a PBT parser
+
+#a PBT parser by Sébastien Kirche
 
 use feature 'say';
 use strict;

@@ -1,5 +1,6 @@
 package MarpaX::Languages::PowerBuilder::PBW;
-#a PBW parser
+
+#a PBW parser by Sébastien Kirche
 
 use feature 'say';
 use strict;

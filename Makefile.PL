@@ -10,6 +10,7 @@ WriteMakefile(
     ABSTRACT_FROM    => 'lib/MarpaX/Languages/PowerBuilder.pm',
     LICENSE          => 'mit',
     PL_FILES         => {},
+    EXE_FILES        => [ 'bin/pbparser_test.pl' ],
     MIN_PERL_VERSION => 5.10.0,
     CONFIGURE_REQUIRES => {
         'ExtUtils::MakeMaker' => 0,
@@ -18,8 +19,13 @@ WriteMakefile(
         'Test::More' => 0,
     },
     PREREQ_PM => {
-        #'ABC'              => 1.6,
-        #'Foo::Bar::Module' => 5.0401,
+        'Marpa::R2' => 0,
+        'File::Basename' => 0,
+        'File::Slurp' => 0,
+        'Data::Dumper' => 0,        #may be removed
+        #~ 'unref' => 0,               #https://github.com/xlat/unref.git
+        'Encode' => 0,
+        'constant' => 0,
     },
     dist  => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },
     clean => { FILES => 'MarpaX-Languages-PowerBuilder-*' },

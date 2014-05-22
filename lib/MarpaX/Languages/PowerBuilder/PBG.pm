@@ -1,5 +1,6 @@
 package MarpaX::Languages::PowerBuilder::PBG;
-#a PBG parser
+
+#a PBG parser by Sébastien Kirche
 
 use feature 'say';
 use strict;

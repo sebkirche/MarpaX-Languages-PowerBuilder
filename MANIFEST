@@ -8,10 +8,8 @@ t/pod-coverage.t
 t/pod.t
 LICENSE
 bin/pbparser_test.pl
-bin/pbselect_test.pl
 lib/MarpaX/Languages/PowerBuilder/pbg.marpa
 lib/MarpaX/Languages/PowerBuilder/PBG.pm
-lib/MarpaX/Languages/PowerBuilder/PBSelect.pm
 lib/MarpaX/Languages/PowerBuilder/pbt.marpa
 lib/MarpaX/Languages/PowerBuilder/PBT.pm
 lib/MarpaX/Languages/PowerBuilder/pbw.marpa
