@@ -25,10 +25,11 @@ if($pkg eq 'SRQ'){
 }
 else{
     say "ok";
-    use Data::Show;
-    #~ show $parsed->{recce}->value;
-	use Data::Dumper::GUI;
-    #say 
-	Dumper ${$parsed->{recce}->value // {}};
-	#~ say $_ foreach keys $parsed->{recce}->value;
+	if(eval 'use Data::Dumper::GUI; 1'){
+        Dumper( ${$parsed->{recce}->value // {}} );
+    }
+    else{
+        require Data::Dumper;
+        say Data::Dumper::Dumper(${$parsed->{recce}->value // {}});
+    }
 }

@@ -8,8 +8,29 @@ use warnings;
 use File::Slurp qw(slurp);
 use Marpa::R2;
 use File::Basename qw(dirname);
-use unref;
+#~ use unref;
 use Data::Dumper;
+
+sub unref{
+    return unless defined wantarray;
+    my $val = shift;
+    my $ref = ref $val;
+    return unless $ref;
+    my $unref={
+        ARRAY  => sub{ @$val }, 
+        HASH   => sub{ %$val }, 
+        SCALAR => sub{ $$val }, 
+        GLOB   => sub{ $$val }, 
+        REF    => sub{ $$val }, 
+        Regexp => sub{ $val  },   #don't unref a regexp.
+    };
+    return $unref->{$ref}() if exists $unref->{$ref};
+    for(keys %$unref){
+        return $unref->{$_}() 
+            if $val->isa($_);
+    }
+    return;
+}
 
 $|++;
 

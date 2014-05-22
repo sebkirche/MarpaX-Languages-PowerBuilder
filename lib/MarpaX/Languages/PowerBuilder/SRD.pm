@@ -98,7 +98,7 @@ sub attributes{
 	#inject a column id into the column list
 	my $id = 1;
 	for (@cols){
-		(values $_)[0]{'#'} = $id++;	#FIXME: ???! is it the perlish way to do ?
+		(values %$_)[0]{'#'} = $id++;	#FIXME: ???! is it the perlish way to do ?
 	}
 	
     $attr{columns} = listkeyval( undef, @cols ) if @cols;
