@@ -78,11 +78,18 @@ my $control_types = do{
 sub containers{ 
     my (undef, @containers ) =@_;
     my @controls = map { (%$_)[1]->{type} = (%$_)[0]; values %$_ } grep { (%$_)[0] =~ $control_types } @containers;
-    #~ die Dumper( \@containers );
     @containers = grep { (%$_)[0] !~ $control_types } @containers;
+#    die Dumper( \@containers );
     if(@controls){
+#    	die Dumper(\@controls);
+
+		#add index to columns controls
         my $id = 1;
         $_->{'#'} = $id++ for grep {$_->{type} eq 'column'} @controls;
+        
+        #inject a name to pre-7 texts that have no name (PB call them obj_xxx at runtime)
+        $id = 1;
+        $_->{'name'} = 't_'.$id++ for grep {$_->{type} eq 'text' && !$_->{name}} @controls;
         my %ctls;
         $ctls{$_->{name}}=$_ for @controls;
         push @containers, { controls => \%ctls };
