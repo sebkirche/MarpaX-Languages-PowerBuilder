@@ -4,6 +4,8 @@ MarpaX-Languages-PowerBuilder
 Parsers for different PowerBuilder sources files based on Jeffrey Keglers's Marpa::R2.
 Work was done in collaboration with Nicolas Georges and with help from Jeffrey.
 
+See also [Powerbuilder::DataWindow](http://github.com/sebkirche/PowerBuilder-DataWindow): a module built upon MarpaX::Languages::PowerBuilder that demonstates datawindow analysis and diagnostics.
+
 INSTALLATION
 ------------
 
