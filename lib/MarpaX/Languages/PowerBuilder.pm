@@ -33,7 +33,7 @@ Sebastien Kirche, C<< <sebastien.kirche at free.fr> >>
 =head1 BUGS
 
 Please report any bugs or feature requests through the web interface at 
-L<https://github.com/sebkirche/MarpaX-Languages-PowerBuilder/issues>.  
+L<http://github.com/sebkirche/MarpaX-Languages-PowerBuilder/issues>.  
 I will be notified, and then you'll automatically be notified of progress on 
 your bug as I make changes.
 
@@ -53,7 +53,7 @@ You can also look for information at:
 
 =item * Git repository
 
-L<https://github.com/sebkirche/MarpaX-Languages-PowerBuilder>
+L<http://github.com/sebkirche/MarpaX-Languages-PowerBuilder>
 
 =back
 
@@ -63,7 +63,7 @@ L<https://github.com/sebkirche/MarpaX-Languages-PowerBuilder>
 
 =head1 LICENSE AND COPYRIGHT
 
-Copyright 2014 Sebastien Kirche.
+Copyright 2014 Sébastien Kirche.
 
 This program is free software; you can redistribute it and/or modify it
 under the terms of the MIT license. 
