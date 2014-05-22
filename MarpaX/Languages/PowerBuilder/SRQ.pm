@@ -1,5 +1,6 @@
 package MarpaX::Languages::PowerBuilder::SRQ;
-#a SRQ parser and compiler to SQL
+
+#a SRQ parser and compiler to SQL by Nicolas Georges
 
 use feature 'say';
 use strict;
@@ -7,6 +8,8 @@ use warnings;
 use File::Slurp qw(slurp);
 use Marpa::R2;
 use File::Basename qw(dirname);
+use unref;
+use Data::Dumper;
 
 $|++;
 
@@ -38,28 +41,45 @@ sub parse{
     return $parsed;
 }
 
+
+sub value{
+    my $self =shift;
+    #lazzy retrieve of value
+    $self->{value} = $self->{recce}->value unless exists $self->{value};
+    $self->{value};
+}
+
 sub sql{
     my $self = shift;
-    my $val = $self->{recce}->value();
+    my $val = $self->value();
     return _compile( $$val );
 }
 
 sub _compile{
     my $ast = shift;
+    my $level = shift // 1;
+    my $tabs = "\t" x $level;
     my $select = exists $ast->{select} ? $ast->{select} : $ast;
-    my $sql = "SELECT\n\t";
-    $sql .= join ",\n\t", @{$select->{columns}//[]}, @{$select->{computes}//[]};
+    my $sql;
+    #arguments
+    foreach my $arg(unref $ast->{arguments}){
+        $sql .= "// argument $arg->{name} ($arg->{type})\n";
+    }
+    $sql .= "SELECT";
+    $sql .= ' DISTINCT ' if exists $select->{distinct};
+    $sql .= "\n\t";
+    $sql .= join ",\n\t", map{ $$_ } unref $select->{selection}//[];
     $sql .= "\n\tFROM ";
-    $sql .= join ",\n\t", @{$select->{tables}//[]};
+    $sql .= join ",\n\t", unref $select->{tables}//[];
     #joins are threated like where clause
-    if(@{$select->{wheres}//[]} + @{$select->{joins}//[]}){
+    if(unref $select->{wheres}//[] + unref $select->{joins}//[]){
         $sql .= "\n\tWHERE ";
         my $where = "(";
-        foreach( @{$select->{wheres}} ){
+        foreach( unref $select->{wheres} ){
             $where .= "\t";
             $where .= "($_->{exp1} " . uc($_->{op})." ";
             if(ref $_->{exp2}){
-                $where .= "(" . _compile($_->{exp2}) . ")";
+                $where .= "(" . _compile($_->{exp2}, $level+1) . ")";
             }
             else{
                 $where .= "$_->{exp2}";
@@ -69,28 +89,39 @@ sub _compile{
         }
         $where .=")\n";
         
-        my @joins = map{ "\t(" . join(" ", $_->{left}, uc($_->{op}), $_->{right}).")" } @{$select->{joins}};
+        my @joins = map{ "\t(" . join(" ", $_->{left}, uc($_->{op}), $_->{right}).")" } unref $select->{joins};
         $sql .= join " AND\n", @joins, $where;
     }
     #groups
-    if(@{$select->{groups}//[]}){
+    if(unref $select->{groups}//[]){
       $sql .= "\tGROUP BY ";
-      $sql .= join ",\n\t", @{$select->{groups}};
+      $sql .= join ",\n\t", unref $select->{groups};
     }
     #havings
-    if(@{$select->{havings}//[]}){
+    if(unref $select->{havings}//[]){
         $sql .= "\n\tHAVING ";
-        foreach( @{$select->{havings}} ){
+        foreach( unref $select->{havings} ){
             $sql .= "\t";
             $sql .= "($_->{exp1} " . uc($_->{op})." ";
             $sql .= "$_->{exp2})";
             $sql .= uc " $_->{logic}\n" if exists $_->{logic};
         }
     }
+    #unions
+    $sql .= "\n" if exists $select->{unions};
+    foreach my $union ( unref $select->{unions}//[] ){
+        $sql .= "UNION(\n";
+        $sql .= _compile( $union, $level+1 );
+        $sql .= ")\n";
+    }
     #orders
     if(exists $ast->{orders}){
         $sql .= "\tORDER BY ";
-        $sql .= join ",\n\t" , map { $_->{name} . " " . uc $_->{dir} } @{$ast->{orders}};
+        $sql .= join ",\n\t" , map { $_->{name} . " " . uc $_->{dir} } unref $ast->{orders};
+    }
+    
+    if($level > 1){
+        $sql =~ s/^/$tabs/gm;
     }
     return $sql;
 }
@@ -110,24 +141,21 @@ sub tables{
     return { 'tables' => \@children };
 }
 
+sub distinct{ { 'distinct' => @_>1?1:0 } }
+
 sub column{
     my (undef, $name, @children) = @_;
-    return $children[3];
+    return bless \$children[3], 'column';
 }
 
-sub columns{
+sub selection{
     my (undef, @children) = @_;
-    return { 'columns' => \@children };
+    return { 'selection' => \@children };
 }
 
 sub compute{
     my (undef, $name, @children) = @_;
-    return $children[3];
-}
-
-sub computes{
-    my (undef, @children) = @_;
-    return { 'computes' => \@children };
+    return bless \$children[3], 'compute';
 }
 
 sub join{
@@ -138,6 +166,16 @@ sub join{
 sub joins{
     my (undef, @children) = @_;
     return { 'joins' => \@children };
+}
+
+sub argument{
+    my (undef, $name, @children) = @_;
+    return { name => $children[3], type => $children[6] };
+}
+
+sub arguments{
+    my (undef, @children) = @_;
+    return { 'arguments' => \@children };
 }
 
 sub where_logic{
@@ -198,13 +236,24 @@ sub orders{
 sub pbselect{
     my (undef, @children) = @_;
     my %mixed;
-    %mixed = (%mixed, %$_) for @children;
+    %mixed = (%mixed, %$_) for grep{ exists $_->{unions} ? not $_->{unions} ~~ [] : 1 } grep { ref eq 'HASH' } @children;
     return \%mixed;
 }
 
+sub unions{ shift; { unions => [ @_ ] } }
+sub union { $_[3] }
+
 sub query{
     my (undef, @children) = @_;
-    return { select => $children[0], orders => $children[1] };
+    my $h = { select => $children[0] };
+    $h->{orders} = $children[1] unless $children[1] ~~ [];
+    $h->{arguments} = $children[2]->{arguments} unless $children[2]->{arguments} ~~ [];
+    return $h;
+}
+
+sub selection_item{
+    my (undef, $item) = @_;
+    return $item;
 }
 
 sub string{
