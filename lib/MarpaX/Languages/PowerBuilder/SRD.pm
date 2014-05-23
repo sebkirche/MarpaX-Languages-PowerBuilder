@@ -24,7 +24,8 @@ sub parse{
     shift if (ref $_[0] || $_[0]) eq __PACKAGE__;   #discard package/object
     my $input = shift;
     my $opts  = shift;
-    #3 ways to pass inputs: glob, file-name, full-string
+    
+    #3 ways to pass input: glob, file-name, full-string
     if(ref $input eq 'GLOB'){
         $input = do{ local $/; <$input> };
     }
