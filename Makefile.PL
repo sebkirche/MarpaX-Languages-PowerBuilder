@@ -1,11 +1,11 @@
-use 5.006;
+﻿use 5.010;
 use strict;
 use warnings FATAL => 'all';
 use ExtUtils::MakeMaker;
 
 WriteMakefile(
     NAME             => 'MarpaX::Languages::PowerBuilder',
-    AUTHOR           => q{Sebastien Kirche <sebastien.kirche@free.fr>},
+    AUTHOR           => q{Sébastien Kirche <sebastien.kirche@free.fr>},
     VERSION_FROM     => 'lib/MarpaX/Languages/PowerBuilder.pm',
     ABSTRACT_FROM    => 'lib/MarpaX/Languages/PowerBuilder.pm',
     LICENSE          => 'mit',
