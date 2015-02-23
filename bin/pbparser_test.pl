@@ -12,7 +12,7 @@ eval "require $pkg;1" or die $@;
 
 say $pkg;
 
-my $parsed = $pkg->parse( $input );
+my $parsed = $pkg->new->parse( $input );
 print $input, " .. ";
 if($parsed->{error}){
     say "nok";

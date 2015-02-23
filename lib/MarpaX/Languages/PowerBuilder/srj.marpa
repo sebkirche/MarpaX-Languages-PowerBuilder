@@ -29,8 +29,8 @@ item                ::= exe                 action => [values]
 					  | pbd                 action => [values]
 					  | obj                 action => [values]
 
-exe                 ::= ('EXE:') string (',') string (',') integer (',') integer (',') integer
-cmp                 ::= ('CMP:') integer (',') integer (',') integer (',') integer (',') integer (',') integer (',') integer
+exe                 ::= ('EXE:') string_1 (',') string_1 (',') integer (',') integer (',') integer
+cmp                 ::= ('CMP:') integers
 com                 ::= ('COM:') string
 des                 ::= ('DES:') string
 cpy                 ::= ('CPY:') string
@@ -39,16 +39,22 @@ pvs                 ::= ('PVS:') string
 pvn                 ::= ('PVN:') integer (',')  integer (',')  integer (',')  integer
 fvs                 ::= ('FVS:') string
 fvn                 ::= ('FVN:') integer (',')  integer (',')  integer (',')  integer
-man                 ::= ('MAN:') integer (',')  string (',')  integer
-pbd                 ::= ('PBD:') string (',') string (',') integer
-obj                 ::= ('OBJ:') string (',') string (',') string
+man                 ::= ('MAN:') integer (',')  string_1 (',')  integer
+pbd                 ::= ('PBD:') string_1 (',') string_1 (',') integer
+obj                 ::= ('OBJ:') string_1 (',') string_1 (',') string
 
+integers            ::= <integer sep>+
+<integer sep>       ::= integer (',')       action => ::first
+                      | integer             action => ::first
 integer             ::= [0-9]+				action => integer
 
-string              ::= <string contents>	action => string
-string              ::= 					action => string
+string_1            ::= <string 1 contents> action => string
+string_1            ::=                     action => string
+<string 1 contents>   ~ [^,\x{A}\x{D}]+
 
-<string contents>     ~ [^,\x{A}\x{B}\x{C}\x{D}\x{2028}\x{2029}]*
+string              ::= <string contents>	action => string
+string              ::=                     action => string
+<string contents>     ~ [^\x{A}\x{B}\x{C}\x{D}\x{2028}\x{2029}]+
 
 :discard              ~ crlf
 crlf                  ~ [\x{D}\x{A}]+
