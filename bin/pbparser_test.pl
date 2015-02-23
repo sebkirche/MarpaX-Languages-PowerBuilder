@@ -6,7 +6,7 @@ $|++; #autoflush stdout/stderr
 my $pkg   = uc shift;
 my $input = shift;
 
-$pkg=~/^SR[QDJ]|PB[GWT]$/ and $input or die "usage: $0 SR?|PB? input-file-name.sr?";
+$pkg=~/^SR[QDJ]|PB[GWRT]$/ and $input or die "usage: $0 SR?|PB? input-file-name.sr?";
 $pkg = "MarpaX::Languages::PowerBuilder::$pkg";
 eval "require $pkg;1" or die $@;
 
