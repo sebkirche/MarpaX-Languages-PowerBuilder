@@ -1,4 +1,5 @@
 package MarpaX::Languages::PowerBuilder::SRQ;
+no if $] >= 5.018, warnings => "experimental::smartmatch";
 use base qw(MarpaX::Languages::PowerBuilder::base);
 
 #a SRQ parser and compiler to SQL by Nicolas Georges
