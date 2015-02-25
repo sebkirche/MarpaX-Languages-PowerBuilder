@@ -30,7 +30,7 @@ item                ::= exe                 action => [values]
 					  | obj                 action => [values]
 
 exe                 ::= ('EXE:') string_1 (',') string_1 (',') integer (',') integer (',') integer
-cmp                 ::= ('CMP:') integers
+cmp                 ::= ('CMP:') integers				action => compiler
 com                 ::= ('COM:') string
 des                 ::= ('DES:') string
 cpy                 ::= ('CPY:') string
@@ -43,7 +43,7 @@ man                 ::= ('MAN:') integer (',')  string_1 (',')  integer
 pbd                 ::= ('PBD:') string_1 (',') string_1 (',') integer
 obj                 ::= ('OBJ:') string_1 (',') string_1 (',') string
 
-integers            ::= <integer sep>+
+integers            ::= <integer sep>+		action => [values]
 <integer sep>       ::= integer (',')       action => ::first
                       | integer             action => ::first
 integer             ::= [0-9]+				action => integer
