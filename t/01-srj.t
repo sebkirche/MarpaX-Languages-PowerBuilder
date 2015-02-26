@@ -7,7 +7,7 @@ use lib 't/lib';
 use TestFunctions;
 use utf8;
 
-plan tests => 34;
+plan tests => 35;
 
 my $package = 'MarpaX::Languages::PowerBuilder::SRJ';
 use_ok( $package )       || print "Bail out!\n";
@@ -72,7 +72,8 @@ my @tests = (
 		[ 'prompt_for_overwrite'        , 0             ],
 		[ 'rebuild_type'                , 'full'        ],
 		[ 'rebuild_type_int'            , 1             ],
-		[ 'windows_classic_style'       , 1             ],
+		[ 'windows_classic_style'       , 0             ],
+		[ 'new_visual_style_controls'   , 1             ],
 
 		[ 'build_type'			        , ''            ],
 		[ 'build_type_int'		        , 0             ],

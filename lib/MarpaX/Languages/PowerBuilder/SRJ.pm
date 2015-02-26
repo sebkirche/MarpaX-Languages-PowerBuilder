@@ -15,7 +15,8 @@ sub application_pbr             { $_[0]->value->{exe}[1] }
 sub prompt_for_overwrite        { $_[0]->value->{exe}[2] }
 sub rebuild_type		        { $_[0]->value->{exe}[3] ? 'full' : 'incremental' }
 sub rebuild_type_int	        { $_[0]->value->{exe}[3] }
-sub windows_classic_style       { $_[0]->value->{exe}[4] }
+sub windows_classic_style       { $_[0]->value->{exe}[4] ? 0 : 1 }
+sub new_visual_style_controls   { $_[0]->value->{exe}[4] }
 
 #code generation options
 #TODO: find meaning of {cmp}[3, 5 and 7]
