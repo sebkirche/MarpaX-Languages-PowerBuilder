@@ -29,6 +29,18 @@ sub execution_level             { $_[0]->value->{man}[1] }
 sub access_protected_sys_ui     { $_[0]->value->{man}[2] ? 'true' : 'false' }
 sub access_protected_sys_ui_int { $_[0]->value->{man}[2] }
 
+#others
+sub product_name                { $_[0]->value->{prd}[0] }
+sub company_name                { $_[0]->value->{com}[0] }
+sub description                 { $_[0]->value->{des}[0] }
+sub copyright                   { $_[0]->value->{cpy}[0] }
+sub product_version_string      { $_[0]->value->{pvs}[0] }
+sub product_version_number      { join('.', @{ $_[0]->value->{pvn} }) }
+sub product_version_numbers     { @{ $_[0]->value->{pvn} } }
+sub file_version_string         { $_[0]->value->{fvs}[0] }
+sub file_version_number         { join('.', @{ $_[0]->value->{fvn} }) }
+sub file_version_numbers        { @{ $_[0]->value->{fvn} } }
+
 #Grammar action methods
 sub project {
 	my ($ppa, $items) = @_;
@@ -66,4 +78,3 @@ sub integer {
 }
 
 1;
-

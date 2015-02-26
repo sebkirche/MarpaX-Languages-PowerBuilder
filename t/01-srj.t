@@ -7,7 +7,7 @@ use lib 't/lib';
 use TestFunctions;
 use utf8;
 
-plan tests => 23;
+plan tests => 33;
 
 my $package = 'MarpaX::Languages::PowerBuilder::SRJ';
 use_ok( $package )       || print "Bail out!\n";
@@ -87,14 +87,25 @@ my @tests = (
 		[ 'execution_level'             , 'asInvoker'   ],
 		[ 'access_protected_sys_ui'     , 'false'       ],
 		[ 'access_protected_sys_ui_int' , 0             ], 
+		
+		[ 'product_name'                , 'Plexus'      ],
+		[ 'company_name'                , 'Conceptware S-à-r-l' ],
+		[ 'description'                 , 'Plexus - Bank regulatory reporting' ],
+		[ 'copyright'                   , 'Copyright 1994-2014 Conceptware'    ],
+		[ 'product_version_string'      , '9.6.1 interne 10'                   ],
+		[ 'product_version_number'      , '9.6.1.0'     ],
+		[ 'product_version_numbers'     , '9,6,1,0'     ],
+		[ 'file_version_string'         , '9060100'     ],
+		[ 'file_version_number'         , '9.6.1.0'     ],
+		[ 'file_version_numbers'        , '9,6,1,0'     ],
 	);
 
 for my $test( @tests ){
 	
 	my $method = $test->[0];
 	$expected  = $test->[1];
-	
-	$got       = $parsed->$method();
+
+	$got       = join ',', $parsed->$method();
 	
 	$method    =~ tr/_-/  /;
 	
