@@ -4,6 +4,11 @@ use base qw(MarpaX::Languages::PowerBuilder::base);
 
 #helper methods
 
+#retrieve pbd entries
+sub pbd                         { @{$_[0]->value->{pbd}} }
+#retrieve object entries
+sub obj                         { @{$_[0]->value->{obj}} }
+
 #build and executable options
 sub executable_name             { $_[0]->value->{exe}[0] }
 sub application_pbr             { $_[0]->value->{exe}[1] }
@@ -28,6 +33,15 @@ sub manifest_type_int           { $_[0]->value->{man}[0] }
 sub execution_level             { $_[0]->value->{man}[1] }
 sub access_protected_sys_ui     { $_[0]->value->{man}[2] ? 'true' : 'false' }
 sub access_protected_sys_ui_int { $_[0]->value->{man}[2] }
+sub manifestinfo_string         { 
+	#this string is usable in orcascript for the manifestinfo argument of the 'set exeinfo property' command
+	my $self = shift;
+	
+	my $manifest = join ';', @{ $self->value->{man} };
+	$manifest =~ s/1$/true/ or $manifest =~ s/0$/false/;
+	
+	return $manifest;
+}
 
 #others
 sub product_name                { $_[0]->value->{prd}[0] }

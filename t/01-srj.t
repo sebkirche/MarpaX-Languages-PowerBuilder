@@ -7,7 +7,7 @@ use lib 't/lib';
 use TestFunctions;
 use utf8;
 
-plan tests => 33;
+plan tests => 34;
 
 my $package = 'MarpaX::Languages::PowerBuilder::SRJ';
 use_ok( $package )       || print "Bail out!\n";
@@ -98,6 +98,10 @@ my @tests = (
 		[ 'file_version_string'         , '9060100'     ],
 		[ 'file_version_number'         , '9.6.1.0'     ],
 		[ 'file_version_numbers'        , '9,6,1,0'     ],
+		
+		[ 'manifestinfo_string'         , '1;asInvoker;false' ],
+		
+		#todo: test 'pbd' and 'obj' methods
 	);
 
 for my $test( @tests ){
