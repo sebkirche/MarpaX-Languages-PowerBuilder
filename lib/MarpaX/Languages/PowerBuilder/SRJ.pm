@@ -2,6 +2,18 @@ package MarpaX::Languages::PowerBuilder::SRJ;
 use base qw(MarpaX::Languages::PowerBuilder::base);
 #a SRJ parser by Nicolas Georges
 
+#helper methods
+sub value{
+	my $self = shift;
+	unless(exists $self->{__value__}){
+		$self->{__value__} = ${ $self->{recce}->value // \{} };
+	}
+	return $self->{__value__};
+}
+
+sub exe_name{ $_[0]->value->{exe}[0] }
+
+#Grammar action methods
 sub project {
 	my ($ppa, $items) = @_;
 	
