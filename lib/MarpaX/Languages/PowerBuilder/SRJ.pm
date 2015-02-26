@@ -3,21 +3,37 @@ use base qw(MarpaX::Languages::PowerBuilder::base);
 #a SRJ parser by Nicolas Georges
 
 #helper methods
-sub value{
-	my $self = shift;
-	unless(exists $self->{__value__}){
-		$self->{__value__} = ${ $self->{recce}->value // \{} };
-	}
-	return $self->{__value__};
-}
 
-sub exe_name{ $_[0]->value->{exe}[0] }
+#build and executable options
+sub executable_name             { $_[0]->value->{exe}[0] }
+sub application_pbr             { $_[0]->value->{exe}[1] }
+sub prompt_for_overwrite        { $_[0]->value->{exe}[2] }
+sub rebuild_type		        { $_[0]->value->{exe}[3] ? 'full' : 'incremental' }
+sub rebuild_type_int	        { $_[0]->value->{exe}[3] }
+sub windows_classic_style       { $_[0]->value->{exe}[4] }
+
+#code generation options
+#TODO: find meaning of {cmp}[3, 5 and 7]
+sub build_type			        { $_[0]->value->{cmp}[0] ? 'machinecode' : '' }	#empty is for pcode
+sub build_type_int		        { $_[0]->value->{cmp}[0] }
+sub with_error_context          { $_[0]->value->{cmp}[1] }
+sub with_trace_information      { $_[0]->value->{cmp}[2] }
+sub optimisation                { qw(speed space none)[ $_[0]->value->{cmp}[4] ] // '?' }
+sub optimisation_int            { $_[0]->value->{cmp}[4] }
+sub enable_debug_symbol         { $_[0]->value->{cmp}[6] }
+
+#manifest information
+sub manifest_type               { qw(none embedded external)[$_[0]->value->{man}[0]] // '?' }
+sub manifest_type_int           { $_[0]->value->{man}[0] }
+sub execution_level             { $_[0]->value->{man}[1] }
+sub access_protected_sys_ui     { $_[0]->value->{man}[2] ? 'true' : 'false' }
+sub access_protected_sys_ui_int { $_[0]->value->{man}[2] }
 
 #Grammar action methods
 sub project {
 	my ($ppa, $items) = @_;
 	
-    my %attrs;	# = ( pbd => \@pbd, obj => \@obj, exe => \$exe);
+    my %attrs;
 	ITEM:
 	for(@$items){
 		my $item = $_->[0];

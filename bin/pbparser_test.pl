@@ -26,10 +26,10 @@ if($pkg eq 'SRQ'){
 else{
     say "ok";
 	if(eval 'use Data::Dumper::GUI; 1'){
-        Dumper( ${$parsed->{recce}->value // {}} );
+        Dumper( $parsed->value );
     }
     else{
         require Data::Dumper;
-        say Data::Dumper::Dumper(${$parsed->{recce}->value // {}});
+        say Data::Dumper::Dumper( $parsed->value );
     }
 }

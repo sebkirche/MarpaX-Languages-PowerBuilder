@@ -2,7 +2,6 @@ package MarpaX::Languages::PowerBuilder::SRD;
 use base qw(MarpaX::Languages::PowerBuilder::base);
 
 #a datawindow parser by Nicolas Georges
-use Encode qw(decode);        #used in string -> HA decodes
 
 sub syntax{
     my ($ppa, $header, $release, $containers, $binsection) = @_;
@@ -93,17 +92,8 @@ sub data{
 
 sub datatype{ shift; join '', @_ }
 
-sub hadecode{
-    my $codes = shift;
-    decode('utf16le', pack 'H*', $codes);
-}
-
 sub string{ 
     my ($ppa, $str) = @_;    
-    if($ppa->{encoding}//'' eq 'HA$' ){
-        #cr$$HEX1$$e900$$ENDHEX$$ance 
-        $str =~ s/\$\$HEX\d+\$\$([a-fA-F0-9]+)\$\$ENDHEX\$\$/hadecode($1)/ge;
-    }
     if(1){#unquote string
         $str =~ s/^"|"$//g;
         $str =~ s/~(.)/$1/g;

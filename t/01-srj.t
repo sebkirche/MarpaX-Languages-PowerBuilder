@@ -1,23 +1,26 @@
-#!perl
+﻿#!perl
 use 5.010;
 use strict;
 use warnings FATAL => 'all';
 use Test::More;
 use lib 't/lib';
 use TestFunctions;
-plan tests => 5;
+use utf8;
 
-use_ok( 'MarpaX::Languages::PowerBuilder::SRJ' )       || print "Bail out!\n";
+plan tests => 23;
 
-my $parser = MarpaX::Languages::PowerBuilder::SRJ->new;
-is( ref($parser), 'MarpaX::Languages::PowerBuilder::SRJ', 'testing new');
+my $package = 'MarpaX::Languages::PowerBuilder::SRJ';
+use_ok( $package )       || print "Bail out!\n";
+
+my $parser = $package->new;
+is( ref($parser), $package, 'testing new');
 	
 my $DATA = <<'DATA';
 HA$PBExportHeader$p_plexus_geni.srj
 $PBExportComments$Generated Application Executable Project
 EXE:plexus9.exe,plexus.pbr,0,1,1
 CMP:0,0,0,2,0,0,0
-COM:Conceptware
+COM:Conceptware S-$$HEX1$$e000$$ENDHEX$$-r-l
 DES:Plexus - Bank regulatory reporting
 CPY:Copyright 1994-2014 Conceptware
 PRD:Plexus
@@ -33,94 +36,67 @@ OBJ:C:\Developpement\Powerbuilder\Plexus\trunk\Sources\conceptware.pbl,makefullp
 OBJ:C:\Developpement\Powerbuilder\Plexus\trunk\Sources\plexus.pbl,optimizedatabase,f
 DATA
 my $parsed = $parser->parse( $DATA );
+is( ref($parser), $package, 'testing parsed package');
 is( $parsed->{error}, '', 'testing parse(FH) without error');
 
 my $got = $parsed->value;
 my $expected = {
-	  cmp => [
-		'0',
-		'0',
-		'0',
-		'2',
-		'0',
-		'0',
-		'0'
-	  ],
-	  com => [
-		'Conceptware'
-	  ],
-	  cpy => [
-		'Copyright 1994-2014 Conceptware'
-	  ],
-	  des => [
-		'Plexus - Bank regulatory reporting'
-	  ],
-	  exe => [
-		'plexus9.exe',
-		'plexus.pbr',
-		'0',
-		'1',
-		'1'
-	  ],
-	  fvn => [
-		'9',
-		'6',
-		'1',
-		'0'
-	  ],
-	  fvs => [
-		'9060100'
-	  ],
-	  man => [
-		'1',
-		'asInvoker',
-		'0'
-	  ],
-	  obj => [
-		[
-		  'C:\\Developpement\\Powerbuilder\\Plexus\\trunk\\Sources\\p8_iml.pbl',
-		  'uo_class_iml_host',
-		  'u'
-		],
-		[
-		  'C:\\Developpement\\Powerbuilder\\Plexus\\trunk\\Sources\\conceptware.pbl',
-		  'makefullpath',
-		  'f'
-		],
-		[
-		  'C:\\Developpement\\Powerbuilder\\Plexus\\trunk\\Sources\\plexus.pbl',
-		  'optimizedatabase',
-		  'f'
-		]
-	  ],
+	  exe => [ 'plexus9.exe', 'plexus.pbr', '0', '1', '1' ],
+	  cmp => [ '0', '0', '0', '2', '0', '0', '0' ],
+	  com => [ 'Conceptware S-à-r-l' ],
+	  des => [ 'Plexus - Bank regulatory reporting' ],
+	  cpy => [ 'Copyright 1994-2014 Conceptware' ],
+	  prd => [ 'Plexus' ],
+	  pvs => [ '9.6.1 interne 10' ],
+	  pvn => [ '9', '6', '1', '0' ],
+	  fvs => [ '9060100' ],
+	  fvn => [ '9', '6', '1', '0' ],
+	  man => [ '1', 'asInvoker', '0' ],
 	  pbd => [
-		[
-		  'plexus.pbl',
-		  'plexus.pbr',
-		  '1'
-		],
-		[
-		  'conceptware.pbl',
-		  'plexus.pbr',
-		  '1'
-		]
+		[ 'plexus.pbl', 'plexus.pbr', '1' ],
+		[ 'conceptware.pbl', 'plexus.pbr', '1' ],
 	  ],
-	  prd => [
-		'Plexus'
+	  obj => [ 
+		[ 'C:\\Developpement\\Powerbuilder\\Plexus\\trunk\\Sources\\p8_iml.pbl', 'uo_class_iml_host', 'u' ],
+		[ 'C:\\Developpement\\Powerbuilder\\Plexus\\trunk\\Sources\\conceptware.pbl', 'makefullpath', 'f' ],
+		[ 'C:\\Developpement\\Powerbuilder\\Plexus\\trunk\\Sources\\plexus.pbl', 'optimizedatabase', 'f' ],
 	  ],
-	  pvn => [
-		'9',
-		'6',
-		'1',
-		'0'
-	  ],
-	  pvs => [
-		'9.6.1 interne 10'
-	  ]
 	};
 
 _is_deep_diff( $got, $expected, 'testing parse(FH) value');
 
 #additional tests
-$DB::single=1;
-is( $parsed->exe_name, 'plexus9.exe', 'retrieve info: exe name');
+my @tests = ( 
+		[ 'executable_name'             , 'plexus9.exe' ],
+		[ 'application_pbr'             , 'plexus.pbr'  ],
+		[ 'prompt_for_overwrite'        , 0             ],
+		[ 'rebuild_type'                , 'full'        ],
+		[ 'rebuild_type_int'            , 1             ],
+		[ 'windows_classic_style'       , 1             ],
+
+		[ 'build_type'			        , ''            ],
+		[ 'build_type_int'		        , 0             ],
+		[ 'with_error_context'          , 0             ],
+		[ 'with_trace_information'      , 0             ],
+		[ 'optimisation'                , 'speed'       ],
+		[ 'optimisation_int'            , 0             ],
+		[ 'enable_debug_symbol'         , 0             ],
+
+		[ 'manifest_type'               , 'embedded'    ],
+		[ 'manifest_type_int'           , 1             ],
+		[ 'execution_level'             , 'asInvoker'   ],
+		[ 'access_protected_sys_ui'     , 'false'       ],
+		[ 'access_protected_sys_ui_int' , 0             ], 
+	);
+
+for my $test( @tests ){
+	
+	my $method = $test->[0];
+	$expected  = $test->[1];
+	
+	$got       = $parsed->$method();
+	
+	$method    =~ tr/_-/  /;
+	
+	is( $got, $expected, "retrieve info '$method'" );
+}
