@@ -6,13 +6,13 @@ $|++; #autoflush stdout/stderr
 my $pkg   = uc shift;
 my $input = shift;
 
-$pkg=~/^SR[QD]|PB[GWT]$/ and $input or die "usage: $0 SR?|PB? input-file-name.sr?";
+$pkg=~/^SR[QDJ]|PB[GWRT]$/ and $input or die "usage: $0 SR?|PB? input-file-name.sr?";
 $pkg = "MarpaX::Languages::PowerBuilder::$pkg";
 eval "require $pkg;1" or die $@;
 
 say $pkg;
 
-my $parsed = $pkg->parse( $input );
+my $parsed = $pkg->new->parse( $input );
 print $input, " .. ";
 if($parsed->{error}){
     say "nok";
@@ -26,10 +26,10 @@ if($pkg eq 'SRQ'){
 else{
     say "ok";
 	if(eval 'use Data::Dumper::GUI; 1'){
-        Dumper( ${$parsed->{recce}->value // {}} );
+        Dumper( $parsed->value );
     }
     else{
         require Data::Dumper;
-        say Data::Dumper::Dumper(${$parsed->{recce}->value // {}});
+        say Data::Dumper::Dumper( $parsed->value );
     }
 }
