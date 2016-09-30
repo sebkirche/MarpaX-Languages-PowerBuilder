@@ -90,8 +90,8 @@ sub string {
 }
 
 sub integer {
-	my ($ppa, $int) = @_;
-	return $int;
+	my ($ppa, @digits) = @_;
+	return join '', @digits;
 }
 
 1;
