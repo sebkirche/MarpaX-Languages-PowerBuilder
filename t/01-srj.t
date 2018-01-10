@@ -16,24 +16,24 @@ my $parser = $package->new;
 is( ref($parser), $package, 'testing new');
 	
 my $DATA = <<'DATA';
-HA$PBExportHeader$p_plexus_geni.srj
+HA$PBExportHeader$p_pgm_geni.srj
 $PBExportComments$Generated Application Executable Project
-EXE:plexus9.exe,plexus.pbr,0,1,1
+EXE:pgm9.exe,pgm.pbr,0,1,1
 CMP:0,0,0,2,0,0,0
-COM:Conceptware S-$$HEX1$$e000$$ENDHEX$$-r-l
-DES:Plexus - Bank regulatory reporting
-CPY:Copyright 1994-2014 Conceptware
-PRD:Plexus
+COM:Company S-$$HEX1$$e000$$ENDHEX$$-r-l
+DES:Pgm - Bank regulatory reporting
+CPY:Copyright 1994-2014 Company
+PRD:Pgm
 PVS:9.6.1 interne 10
 PVN:9,6,1,0
 FVS:9060100
 FVN:9,6,1,0
 MAN:1,asInvoker,0
-PBD:plexus.pbl,plexus.pbr,1
-PBD:conceptware.pbl,plexus.pbr,1
-OBJ:C:\Developpement\Powerbuilder\Plexus\trunk\Sources\p8_iml.pbl,uo_class_iml_host,u
-OBJ:C:\Developpement\Powerbuilder\Plexus\trunk\Sources\conceptware.pbl,makefullpath,f
-OBJ:C:\Developpement\Powerbuilder\Plexus\trunk\Sources\plexus.pbl,optimizedatabase,f
+PBD:pgm.pbl,pgm.pbr,1
+PBD:company.pbl,pgm.pbr,1
+OBJ:C:\Developpement\Powerbuilder\Pgm\trunk\Sources\p8_iml.pbl,uo_class_iml_host,u
+OBJ:C:\Developpement\Powerbuilder\Pgm\trunk\Sources\company.pbl,makefullpath,f
+OBJ:C:\Developpement\Powerbuilder\Pgm\trunk\Sources\pgm.pbl,optimizedatabase,f
 DATA
 my $parsed = $parser->parse( $DATA );
 is( ref($parser), $package, 'testing parsed package');
@@ -41,25 +41,25 @@ is( $parsed->{error}, '', 'testing parse(FH) without error');
 
 my $got = $parsed->value;
 my $expected = {
-	  exe => [ 'plexus9.exe', 'plexus.pbr', '0', '1', '1' ],
+	  exe => [ 'pgm9.exe', 'pgm.pbr', '0', '1', '1' ],
 	  cmp => [ '0', '0', '0', '2', '0', '0', '0' ],
-	  com => [ 'Conceptware S-à-r-l' ],
-	  des => [ 'Plexus - Bank regulatory reporting' ],
-	  cpy => [ 'Copyright 1994-2014 Conceptware' ],
-	  prd => [ 'Plexus' ],
+	  com => [ 'Company S-à-r-l' ],
+	  des => [ 'Pgm - Bank regulatory reporting' ],
+	  cpy => [ 'Copyright 1994-2014 Company' ],
+	  prd => [ 'Pgm' ],
 	  pvs => [ '9.6.1 interne 10' ],
 	  pvn => [ '9', '6', '1', '0' ],
 	  fvs => [ '9060100' ],
 	  fvn => [ '9', '6', '1', '0' ],
 	  man => [ '1', 'asInvoker', '0' ],
 	  pbd => [
-		[ 'plexus.pbl', 'plexus.pbr', '1' ],
-		[ 'conceptware.pbl', 'plexus.pbr', '1' ],
+		[ 'pgm.pbl', 'pgm.pbr', '1' ],
+		[ 'company.pbl', 'pgm.pbr', '1' ],
 	  ],
 	  obj => [ 
-		[ 'C:\\Developpement\\Powerbuilder\\Plexus\\trunk\\Sources\\p8_iml.pbl', 'uo_class_iml_host', 'u' ],
-		[ 'C:\\Developpement\\Powerbuilder\\Plexus\\trunk\\Sources\\conceptware.pbl', 'makefullpath', 'f' ],
-		[ 'C:\\Developpement\\Powerbuilder\\Plexus\\trunk\\Sources\\plexus.pbl', 'optimizedatabase', 'f' ],
+		[ 'C:\\Developpement\\Powerbuilder\\Pgm\\trunk\\Sources\\p8_iml.pbl', 'uo_class_iml_host', 'u' ],
+		[ 'C:\\Developpement\\Powerbuilder\\Pgm\\trunk\\Sources\\company.pbl', 'makefullpath', 'f' ],
+		[ 'C:\\Developpement\\Powerbuilder\\Pgm\\trunk\\Sources\\pgm.pbl', 'optimizedatabase', 'f' ],
 	  ],
 	};
 
@@ -67,8 +67,8 @@ _is_deep_diff( $got, $expected, 'testing parse(FH) value');
 
 #additional tests
 my @tests = ( 
-		[ 'executable_name'             , 'plexus9.exe' ],
-		[ 'application_pbr'             , 'plexus.pbr'  ],
+		[ 'executable_name'             , 'pgm9.exe' ],
+		[ 'application_pbr'             , 'pgm.pbr'  ],
 		[ 'prompt_for_overwrite'        , 0             ],
 		[ 'rebuild_type'                , 'full'        ],
 		[ 'rebuild_type_int'            , 1             ],
@@ -89,10 +89,10 @@ my @tests = (
 		[ 'access_protected_sys_ui'     , 'false'       ],
 		[ 'access_protected_sys_ui_int' , 0             ], 
 		
-		[ 'product_name'                , 'Plexus'      ],
-		[ 'company_name'                , 'Conceptware S-à-r-l' ],
-		[ 'description'                 , 'Plexus - Bank regulatory reporting' ],
-		[ 'copyright'                   , 'Copyright 1994-2014 Conceptware'    ],
+		[ 'product_name'                , 'Pgm'      ],
+		[ 'company_name'                , 'Company S-à-r-l' ],
+		[ 'description'                 , 'Pgm - Bank regulatory reporting' ],
+		[ 'copyright'                   , 'Copyright 1994-2014 Company'    ],
 		[ 'product_version_string'      , '9.6.1 interne 10'                   ],
 		[ 'product_version_number'      , '9.6.1.0'     ],
 		[ 'product_version_numbers'     , '9,6,1,0'     ],
