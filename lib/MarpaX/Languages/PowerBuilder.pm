@@ -1,6 +1,6 @@
 package MarpaX::Languages::PowerBuilder;
 
-use 5.006;
+use 5.010;
 use strict;
 use warnings FATAL => 'all';
 
@@ -63,14 +63,14 @@ L<http://github.com/sebkirche/MarpaX-Languages-PowerBuilder>
 
 =head1 LICENSE AND COPYRIGHT
 
-Copyright 2014 Sébastien Kirche.
+Copyright 2014 SÃ©bastien Kirche.
 
 This program is free software; you can redistribute it and/or modify it
 under the terms of the MIT license. 
 
 L<The MIT License (MIT)>
 
-Copyright (c) 2014 Sébastien Kirche, SRD, SRQ, PBSelect parsers and others contributions by Nicolas Georges.
+Copyright (c) 2014 SÃ©bastien Kirche, SRD, SRQ, PBSelect parsers and others contributions by Nicolas Georges.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
