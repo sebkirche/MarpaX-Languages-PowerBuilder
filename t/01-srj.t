@@ -1,4 +1,4 @@
-﻿#!perl
+#!perl
 use 5.010;
 use strict;
 use warnings FATAL => 'all';
@@ -24,10 +24,10 @@ COM:Company S-$$HEX1$$e000$$ENDHEX$$-r-l
 DES:Pgm - Bank regulatory reporting
 CPY:Copyright 1994-2014 Company
 PRD:Pgm
-PVS:9.6.1 interne 10
-PVN:9,6,1,0
-FVS:9060100
-FVN:9,6,1,0
+PVS:9.6.10 interne 10
+PVN:9,6,10,0
+FVS:9061000
+FVN:9,6,10,0
 MAN:1,asInvoker,0
 PBD:pgm.pbl,pgm.pbr,1
 PBD:company.pbl,pgm.pbr,1
@@ -47,10 +47,10 @@ my $expected = {
 	  des => [ 'Pgm - Bank regulatory reporting' ],
 	  cpy => [ 'Copyright 1994-2014 Company' ],
 	  prd => [ 'Pgm' ],
-	  pvs => [ '9.6.1 interne 10' ],
-	  pvn => [ '9', '6', '1', '0' ],
-	  fvs => [ '9060100' ],
-	  fvn => [ '9', '6', '1', '0' ],
+	  pvs => [ '9.6.10 interne 10' ],
+	  pvn => [ '9', '6', '10', '0' ],
+	  fvs => [ '9061000' ],
+	  fvn => [ '9', '6', '10', '0' ],
 	  man => [ '1', 'asInvoker', '0' ],
 	  pbd => [
 		[ 'pgm.pbl', 'pgm.pbr', '1' ],
@@ -93,12 +93,12 @@ my @tests = (
 		[ 'company_name'                , 'Company S-à-r-l' ],
 		[ 'description'                 , 'Pgm - Bank regulatory reporting' ],
 		[ 'copyright'                   , 'Copyright 1994-2014 Company'    ],
-		[ 'product_version_string'      , '9.6.1 interne 10'                   ],
-		[ 'product_version_number'      , '9.6.1.0'     ],
-		[ 'product_version_numbers'     , '9,6,1,0'     ],
-		[ 'file_version_string'         , '9060100'     ],
-		[ 'file_version_number'         , '9.6.1.0'     ],
-		[ 'file_version_numbers'        , '9,6,1,0'     ],
+		[ 'product_version_string'      , '9.6.10 interne 10'                   ],
+		[ 'product_version_number'      , '9.6.10.0'     ],
+		[ 'product_version_numbers'     , '9,6,10,0'     ],
+		[ 'file_version_string'         , '9061000'     ],
+		[ 'file_version_number'         , '9.6.10.0'     ],
+		[ 'file_version_numbers'        , '9,6,10,0'     ],
 		
 		[ 'manifestinfo_string'         , '1;asInvoker;false' ],
 		
